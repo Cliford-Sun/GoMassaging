@@ -25,7 +25,7 @@ func (t *Server) Handerler(conn net.Conn) {
 }
 
 // 启动服务器
-func (t *Server) Strat() {
+func (t *Server) Start() {
 	//socket监听
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", t.Ip, t.Port))
 	if err != nil {
@@ -36,17 +36,14 @@ func (t *Server) Strat() {
 	defer listener.Close()
 
 	for {
-		//接收
+		//如果监听成功，进入一个无限循环，不断接受新的连接。
 		connect, err := listener.Accept()
 		if err != nil {
 			fmt.Println("listerner.accept err:", err)
 			continue
 		}
-		//do hendler
+		//对于每个新的连接，它会使用go关键字来异步执行Handerler方法。
 		go t.Handerler(connect)
 
 	}
-
-	//close listen socket
-
 }
