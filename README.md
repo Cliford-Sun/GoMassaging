@@ -9,6 +9,7 @@ golang学习后的初次项目实战，也是第一次做项目，为了加强�
 ---
 
 ## 1.实现了server的基本架构
+
 ---
 
 ## 2.实现了用户上线与广播的功能：
@@ -16,8 +17,6 @@ golang学习后的初次项目实战，也是第一次做项目，为了加强�
 **下面就是go语言webserver服务器的基本框架**
 
 框架利用了go语言的goroutine和channel的机制，实现了高并发的WebSocket服务器，用于处理多用户实时通信。
-
-![image](https://github.com/JSmikasa/GoMassaging/blob/main/image/README/1715783867674.png)
 
 **OnlineMap**：
 
@@ -44,6 +43,5 @@ golang学习后的初次项目实战，也是第一次做项目，为了加强�
 服务器管理在线用户，并通过通道和goroutine与每个客户端进行通信。
 
 每个客户端与一个用户goroutine关联，通过连接接收服务器发送的消息。
-
 
 总的来说，这个架构利用Go语言的goroutine和channel机制，实现了一个高并发的WebSocket服务器，用于处理多用户实时通信。
