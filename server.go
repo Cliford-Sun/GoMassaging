@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"sync"
 )
@@ -29,7 +30,7 @@ func NewServer(ip string, port int) *Server {
 	return server
 }
 
-// 监听Message广播小西channel的goroutine，一旦有消息就把所有消息传递给在线用户
+// 监听Message广播消息channel的goroutine，一旦有消息就把所有消息传递给在线用户
 func (t *Server) ListenMessager() {
 	for {
 		msg := <-t.Message
@@ -62,6 +63,26 @@ func (t *Server) Handler(conn net.Conn) {
 
 	//广播用户上线信息
 	t.Broadcast(user, "上线")
+
+	go func() {
+		buf := make([]byte, 4096)
+		for {
+			n, err := conn.Read(buf)
+			if n == 0 {
+				t.Broadcast(user, "下线")
+				return
+			}
+			if err != nil && err != io.EOF {
+				fmt.Println("conn Read err:", err)
+				return
+			}
+			//提取用户的消息（去除\n）
+			msg := string(buf[:n-1])
+
+			//将的到的消息广播：
+			t.Broadcast(user, msg)
+		}
+	}()
 
 	//当前handler阻塞
 	select {}
