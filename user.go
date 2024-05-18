@@ -63,7 +63,7 @@ func (t *User) Domessage(msg string) {
 		//当前在线用户的查询
 		t.server.mapLock.Lock()
 		for _, user := range t.server.OnlineMap {
-			onlineMsg := "[" + user.Addr + "]" + user.Name + ":" + "在线..."
+			onlineMsg := "[" + user.Addr + "]" + user.Name + ":" + "在线...\n"
 			t.Sendmsg(onlineMsg)
 		}
 		t.server.mapLock.Unlock()
@@ -72,7 +72,7 @@ func (t *User) Domessage(msg string) {
 		//判断name是否已经存在
 		_, ok := t.server.OnlineMap[newName]
 		if ok {
-			t.Sendmsg("当前用户名已经存在")
+			t.Sendmsg("当前用户名已经存在\n")
 		} else {
 			t.server.mapLock.Lock()
 			delete(t.server.OnlineMap, t.Name)
@@ -80,7 +80,7 @@ func (t *User) Domessage(msg string) {
 			t.server.mapLock.Unlock()
 
 			t.Name = newName
-			t.Sendmsg("")
+			t.Sendmsg("已修改用户名为" + newName + "\n")
 		}
 	} else {
 		t.server.Broadcast(t, msg)
