@@ -6,10 +6,11 @@ import (
 )
 
 type User struct {
-	Name string
-	Addr string
-	C    chan string
-	conn net.Conn
+	Name  string
+	Addr  string
+	C     chan string
+	stopC chan bool
+	conn  net.Conn
 
 	server *Server
 }
@@ -19,10 +20,11 @@ func NewUser(conn net.Conn, server *Server) *User {
 	userAddr := conn.RemoteAddr().String()
 
 	user := &User{
-		Name: userAddr,
-		Addr: userAddr,
-		C:    make(chan string),
-		conn: conn,
+		Name:  userAddr,
+		Addr:  userAddr,
+		C:     make(chan string),
+		stopC: make(chan bool),
+		conn:  conn,
 
 		server: server,
 	}
@@ -47,6 +49,8 @@ func (t *User) Offline() {
 	t.server.mapLock.Lock()
 	delete(t.server.OnlineMap, t.Name)
 	t.server.mapLock.Unlock()
+
+	t.stopC <- false
 
 	//广播用户上线信息
 	t.server.Broadcast(t, "下线")
@@ -82,6 +86,25 @@ func (t *User) Domessage(msg string) {
 			t.Name = newName
 			t.Sendmsg("已修改用户名为" + newName + "\n")
 		}
+	} else if len(msg) > 4 && msg[:3] == "to|" {
+		//消息格式 to|user|massage
+		//获取用户名
+		remoteName := strings.Split(msg, "|")[1]
+		if remoteName == "" {
+			t.Sendmsg("消息格式错误,请使用:to|user|massage的格式\n")
+			return
+		}
+		remoteUser, ok := t.server.OnlineMap[remoteName]
+		if !ok {
+			t.Sendmsg("该用户不存在\n")
+			return
+		}
+		content := strings.Split(msg, "|")[2]
+		if content == "" {
+			t.Sendmsg("无消息内容，请重新发送\n")
+			return
+		}
+		remoteUser.Sendmsg(t.Name + "对您说：" + content + "\n")
 	} else {
 		t.server.Broadcast(t, msg)
 	}
@@ -91,7 +114,12 @@ func (t *User) Domessage(msg string) {
 // 监听当前的User channel的方法，一旦有消息就发送给客户端
 func (t *User) ListenMessage() {
 	for {
-		msg := <-t.C
-		t.conn.Write([]byte(msg + "\n"))
+		select {
+		case msg := <-t.C:
+			t.conn.Write([]byte(msg + "\n"))
+		case <-t.stopC:
+			return
+		}
+
 	}
 }
