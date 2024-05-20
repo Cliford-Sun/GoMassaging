@@ -23,3 +23,6 @@ golang学习后的初次项目实战，也是第一次做项目，为了加强�
 输入 `rename|newname`就可以将用户名字改成*newname*
 输入 `to|username|message`可以对用户*uername*私聊发送消息*message*
 当用户在聊天室内不活跃30秒后将会被强制踢出
+
+**在实现上面聊天功能的基础上实现了客户端的建立**
+在运行bin文件夹中的server.exe和client.exe后,会有目录提示选择模式,根据不同的模式来实现公聊,私聊,更新用户名等功能

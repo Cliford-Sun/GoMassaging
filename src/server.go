@@ -54,8 +54,7 @@ func (t *Server) Broadcast(User *User, msg string) {
 func (t *Server) Handler(conn net.Conn) {
 	//当前业务
 	user := NewUser(conn, t)
-
-	fmt.Println(user.Name, "链接建立成功... ")
+	//fmt.Println(user.Name, "链接建立成功... ")
 	//用户上线
 	user.Online()
 
@@ -92,7 +91,7 @@ func (t *Server) Handler(conn net.Conn) {
 		case <-isLive:
 			//当前用户是活跃的，重置计时器
 			//不做任何事情，为了激活select，更新下面的计时器
-		case <-time.After(time.Second * 20):
+		case <-time.After(time.Second * 300):
 			//已经超时
 			//将当前user强制踢出
 

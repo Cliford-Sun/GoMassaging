@@ -84,7 +84,7 @@ func (t *User) Domessage(msg string) {
 			t.server.mapLock.Unlock()
 
 			t.Name = newName
-			t.Sendmsg("已修改用户名为" + newName + "\n")
+			t.Sendmsg("已修改用户名为:" + newName + "\n")
 		}
 	} else if len(msg) > 4 && msg[:3] == "to|" {
 		//消息格式 to|user|massage
