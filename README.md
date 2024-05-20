@@ -10,7 +10,7 @@ golang学习后的初次项目实战，也是第一次做项目，为了加强�
 
 **下面就是go语言webserver服务器的基本框架**
 框架利用了go语言的goroutine和channel的机制，实现了高并发的WebSocket服务器，用于处理多用户实时通信。
-![image](https://github.com/Cliford-Sun/GoMassaging/blob/main/WebServer.png)
+![image](https://github.com/Cliford-Sun/GoMassaging/blob/main/graph/WebServer.png)
 
 服务器接收消息后，通过遍历 OnlineMap，将消息放入每个在线用户的消息通道，用户goroutine从通道读取消息并发送给对应的客户端，实现消息的广播。
 
